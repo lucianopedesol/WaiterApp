@@ -63,7 +63,7 @@ export function OrdersModal({ visible, order, onClose, onCancelOrder, isLoading,
             {order.products.map(({ _id, product, quantity }) => (
               <div className="item" key={_id}>
                 <img
-                  src={`http://192.168.100.11:5000/uploads/${product.imagePath}`}
+                  src={`http://192.168.0.92:5000//uploads/${product.imagePath}`}
                   alt={product.name}
                   width="58"
                   height="28.51"

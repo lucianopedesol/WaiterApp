@@ -2,7 +2,7 @@ export interface Order {
   _id: string;
   table: string;
   status: 'WAITING' | 'IN_PRODUCTION' | 'DONE';
-
+  createdAt: string;
   products: Array<{
     _id: string;
     quantity: number;
