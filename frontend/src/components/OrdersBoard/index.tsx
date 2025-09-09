@@ -8,11 +8,12 @@ import {toast} from 'react-toastify';
 interface OrdersBoardProps {
   icon: string;
   title: string;
+  nextStatus?: Order['status'];
   orders: Array<Order> | [];
   onCancelOrder(orderId: string): void;
   onOrderStatusChange(orderId: string, status: Order['status']): void;
 }
-export function OrdersBoard({ icon, title, orders, onCancelOrder, onOrderStatusChange }: OrdersBoardProps) {
+export function OrdersBoard({ icon, title, orders, nextStatus, onCancelOrder, onOrderStatusChange }: OrdersBoardProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,15 +42,14 @@ export function OrdersBoard({ icon, title, orders, onCancelOrder, onOrderStatusC
   }
 
   async function handleOrderStatusChange() {
+    if (!nextStatus) return;
     setIsLoading(true);
 
-    const status = selectedOrder?.status === 'WAITING' ? 'IN_PRODUCTION' : 'DONE';
-
     await api.patch(`orders/${selectedOrder?._id}`, {
-      status
+      status: nextStatus
     });
-
-    onOrderStatusChange(selectedOrder!._id, status);
+    console.log(selectedOrder, nextStatus);
+    onOrderStatusChange(selectedOrder!._id, nextStatus);
     setIsLoading(false);
     setIsModalVisible(false);
     toast.success(`O pedido da mesa ${selectedOrder?.table} teve o status alterado!`);

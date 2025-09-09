@@ -24,13 +24,18 @@ export function  Main() {
   const [products, setProducts] = useState<Product[] | []>([]);
   const [categories, setCategories] = useState<Category[] | []>([]);
 
+  const allCategory = {
+    _id: null,
+    name: 'Todas',
+    icon: '🍽️'
+  };
   useEffect(() => {
     Promise.all([
       api.get('categories'),
       api.get('products'),
     ]).then(([categoriesResponse, productsResponse]) => {
       setProducts(productsResponse.data);
-      setCategories(categoriesResponse.data);
+      setCategories([allCategory,...categoriesResponse.data]);
       setIsLoading(false);
     });
   }, []);

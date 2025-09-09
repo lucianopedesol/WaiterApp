@@ -38,6 +38,7 @@ export function Orders() {
   const waiting = sortByCreatedAt(orders.filter(({ status }) => status === 'WAITING'));
   const inProduction = sortByCreatedAt(orders.filter(({ status }) => status === 'IN_PRODUCTION'));
   const done = sortByCreatedAt(orders.filter(({ status }) => status === 'DONE'));
+  const delivered = sortByCreatedAt(orders.filter(({ status }) => status === 'DELIVERED'));
 
   function handleCancelOrder(orderId: string) {
     setOrders((prev) => prev.filter(({_id}) => _id !== orderId));
@@ -54,6 +55,7 @@ export function Orders() {
       <OrdersBoard
         icon="🕑"
         title="Fila de espera"
+        nextStatus='IN_PRODUCTION'
         orders={waiting}
         onCancelOrder={handleCancelOrder}
         onOrderStatusChange={handleOrderStatusChange}
@@ -61,6 +63,7 @@ export function Orders() {
       <OrdersBoard
         icon="👩‍🍳"
         title="Em preparação"
+        nextStatus='DONE'
         orders={inProduction}
         onCancelOrder={handleCancelOrder}
         onOrderStatusChange={handleOrderStatusChange}
@@ -69,6 +72,14 @@ export function Orders() {
         icon="✅"
         title="Pronto!"
         orders={done}
+        nextStatus='DELIVERED'
+        onCancelOrder={handleCancelOrder}
+        onOrderStatusChange={handleOrderStatusChange}
+      />
+      <OrdersBoard
+        icon="✅"
+        title="Entregue!"
+        orders={delivered}
         onCancelOrder={handleCancelOrder}
         onOrderStatusChange={handleOrderStatusChange}
       />

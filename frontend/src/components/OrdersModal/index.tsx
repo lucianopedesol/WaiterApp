@@ -6,12 +6,12 @@ import {useEffect} from 'react';
 interface OrdersModalProps {
   visible: boolean;
   order: Order | null;
+  isLoading: boolean;
   onClose(): void;
   onCancelOrder(): void;
-  isLoading: boolean;
   onOrderStatusChange(): void;
 }
-export function OrdersModal({ visible, order, onClose, onCancelOrder, isLoading, onOrderStatusChange }: OrdersModalProps) {
+export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,  onOrderStatusChange }: OrdersModalProps) {
   if (!visible || !order) return null;
 
   const total = order.products.reduce((prev, current) => {
@@ -63,7 +63,7 @@ export function OrdersModal({ visible, order, onClose, onCancelOrder, isLoading,
             {order.products.map(({ _id, product, quantity }) => (
               <div className="item" key={_id}>
                 <img
-                  src={`http://192.168.0.92:5000//uploads/${product.imagePath}`}
+                  src={`http://172.16.10.10:5000/uploads/${product.imagePath}`}
                   alt={product.name}
                   width="58"
                   height="28.51"
@@ -86,21 +86,23 @@ export function OrdersModal({ visible, order, onClose, onCancelOrder, isLoading,
         </OrderDetails>
 
         <Actions>
-          {order.status !== 'DONE' && (
+          {order.status !== 'DELIVERED' && (
             <button type="button" className="primary" disabled={isLoading} onClick={onOrderStatusChange}>
               <span>
                 {order.status === 'WAITING' && '👩‍🍳'}
                 {order.status === 'IN_PRODUCTION' && '☑️'}
+                {order.status === 'DONE' && '✅'}
               </span>
               <strong>
                 {order.status === 'WAITING' && 'Iniciar preparação'}
                 {order.status === 'IN_PRODUCTION' && 'Concluir pedido'}
+                {order.status === 'DONE' && 'Entregar pedido'}
               </strong>
             </button>
           )}
 
           <button type="button" className="secondary" onClick={onCancelOrder} disabled={isLoading}>
-            {order.status !== 'DONE' ? 'Cancelar pedido' : 'Deletar pedido'}
+            {order.status !== 'DELIVERED' ? 'Cancelar pedido' : 'Deletar pedido'}
           </button>
         </Actions>
       </ModalBody>

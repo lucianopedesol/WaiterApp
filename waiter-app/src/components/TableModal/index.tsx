@@ -27,16 +27,16 @@ export function TableModal({ visible, onClose, onSave }: TableModalProps) {
       <Overlay behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
         <ModalBody>
           <Header>
-            <Text weight="600">Informe a mesa</Text>
+            <Text weight="600">Informe o Cliente</Text>
             <TouchableOpacity onPress={() => onClose()}>
               <Close color='#666' />
             </TouchableOpacity>
           </Header>
           <Form>
             <Input
-              placeholder='Número da mesa'
+              placeholder='Nome do Cliente'
               placeholderTextColor='#666'
-              keyboardType="number-pad"
+              keyboardType="default"
               onChangeText={setTable}
             />
             <Button onPress={() => handleSaveTable()} disabled={table.length === 0}>Salvar</Button>
