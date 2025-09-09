@@ -25,7 +25,7 @@ export function  Main() {
   const [categories, setCategories] = useState<Category[] | []>([]);
 
   const allCategory = {
-    _id: null,
+    _id: '',
     name: 'Todas',
     icon: '🍽️'
   };

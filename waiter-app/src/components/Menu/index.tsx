@@ -6,6 +6,9 @@ import {PlusCircle} from '../Icons/PlusCircle';
 import {Product} from '../../types/product';
 import {ProductModal} from '../ProductModal';
 import {useState} from 'react';
+import SearchInput from '../SearchInput';
+import { useProductSearch } from '../../hooks/useProductSearch'; // Importe o novo hook
+
 
 interface MenuProps {
   onAddToCart(product: Product): void;
@@ -14,6 +17,7 @@ interface MenuProps {
 export function Menu({ onAddToCart, products }: MenuProps) {
   const [isProductModalVisible, setIsProductModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { filteredProducts, debouncedSearch } = useProductSearch(products);
 
   function handleProductPress(product: Product) {
     setIsProductModalVisible(true);
@@ -28,18 +32,18 @@ export function Menu({ onAddToCart, products }: MenuProps) {
         product={selectedProduct}
         onAddToCart={onAddToCart}
       />
-
+      <SearchInput onChangeText={debouncedSearch} />
       <FlatList
         style={{ marginTop: 24 }}
         contentContainerStyle={{ paddingHorizontal: 24 }}
-        data={products}
+        data={filteredProducts}
         keyExtractor={({ _id }) => _id}
         ItemSeparatorComponent={Separator}
         renderItem={({ item: product }) => (
           <ProductContainer onPress={() => handleProductPress(product)}>
             <Image
               source={{
-                uri: `http://172.16.10.10:5000/uploads/${product.imagePath}`
+                uri: `http://192.168.0.16:5000/uploads/${product.imagePath}`
               }}
             />
 

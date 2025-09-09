@@ -12,10 +12,10 @@ export function Header({ selectedTable, onCancelOrder }: HeaderProps) {
     <Container>
       {!selectedTable && (
         <>
-          <Text size={14} opacity={0.9}>Bem vindo(a) ao</Text>
-          <Text size={24} weight={'700'}>
-            Waiter
-            <Text size={24}>App</Text>
+          <Text size={14} opacity={0.9}>Bem vindo(a) a</Text>
+          <Text size={24} weight={'500'}>
+            Cantina de
+            <Text size={24} weight={'700'}> Canaã</Text>
           </Text>
         </>
       )}
