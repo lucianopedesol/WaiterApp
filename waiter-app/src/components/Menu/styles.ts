@@ -26,4 +26,5 @@ export const AddToCartButton = styled.TouchableOpacity`
   position: absolute;
   right: 0;
   bottom: 0;
-`;
+  width: 32px;
+  `;
