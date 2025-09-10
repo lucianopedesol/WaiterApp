@@ -18,7 +18,7 @@ O projeto possui uma aplicação mobile e web que se complementam, o app mobile 
 
 - [Api](https://github.com/VictorKayk/WaiterApp/tree/main/api)
 - [Frontend](https://github.com/VictorKayk/WaiterApp/tree/main/frontend)
-- [Mobile](https://github.com/VictorKayk/WaiterApp/tree/main/app)
+- [Mobile](https://github.com/VictorKayk/WaiterApp/tree/main/waiter-app)
 
 <a href='https://www.figma.com/file/Ivct0qKlCFhWIIPrC5yHBF/WAITERAPP?node-id=216%3A1787&t=4ByEfZEfoA5QrxMn-0'>
   <img src='https://user-images.githubusercontent.com/76819323/211413174-84698301-e65d-4251-87e3-c018ba9f3326.png' />
