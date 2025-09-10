@@ -3,6 +3,7 @@ import close from '../../assets/images/close-icon.svg';
 import { Order } from '../../Types/Order';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { useEffect } from 'react';
+import { useAuth } from '../../contexts/authContext';
 
 const PRODUCTION_STEPS = ['WAITING', 'IN_PRODUCTION'];
 
@@ -15,6 +16,8 @@ interface OrdersModalProps {
   onOrderStatusChange(status?: Order['status']): void;
 }
 export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder, onOrderStatusChange }: OrdersModalProps) {
+  const { authState } = useAuth();
+  const { user } = authState;
   if (!visible || !order) return null;
 
   const total = order.products.reduce((prev, current) => {
@@ -104,14 +107,15 @@ export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,
               </strong>
             </button>
           )}
-
-          <button type="button" className="secondary" onClick={onCancelOrder} disabled={isLoading}>
-            {order.status !== 'DELIVERED' ? 'Cancelar pedido' : 'Deletar pedido'}
-          </button>
+          {user?.profile === 'ADMIN' && (
+            <button type="button" className="secondary" onClick={onCancelOrder} disabled={isLoading}>
+              {order.status !== 'DELIVERED' ? 'Cancelar pedido' : 'Deletar pedido'}
+            </button>
+          )}
           {
             PRODUCTION_STEPS.includes(order.status) && (
               <button type="button" className="secondary" onClick={() => onOrderStatusChange('DELIVERED')} disabled={isLoading}>
-                Finalizar
+                Entregar
               </button>
             )
           }

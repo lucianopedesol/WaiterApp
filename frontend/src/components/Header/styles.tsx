@@ -49,3 +49,16 @@ export const StyledButton = styled.button`
     background-color: rgba(209, 213, 219, 0.5);
   }
 `;
+
+export const LogoffButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  border-radius: 9999px;
+  color: #FFF;
+
+`;

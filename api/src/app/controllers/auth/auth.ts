@@ -11,14 +11,15 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 // Lógica para registrar um novo usuário
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    console.log(req.body);
+    const { email, password, profile } = req.body;
     const userExists = await User.findOne({ email });
 
     if (userExists) {
       return res.status(400).send({ error: 'Este email já está em uso.' });
     }
 
-    const user: IUserDocument = new User({ email, password });
+    const user: IUserDocument = new User({ email, password, profile });
     await user.save();
 
     res.status(201).send({ message: 'Usuário registrado com sucesso!' });
@@ -42,7 +43,7 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(400).send({ error: 'Credenciais inválidas.' });
     }
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id, email: user.email, profile: user.profile }, JWT_SECRET, { expiresIn: '1h' });
     res.send({ token });
   } catch (error) {
     res.status(500).send({ error: 'Erro ao fazer login.' });

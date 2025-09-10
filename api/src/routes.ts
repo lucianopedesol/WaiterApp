@@ -48,6 +48,6 @@ router.patch('/orders/:orderId', changeOrderStatusController);
 router.delete('/orders/:orderId', cancelOrdersController);
 
 // Rotas de usuário
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.get('/profile', authMiddleware, getProfile);
+router.post('/user/register', registerUser);
+router.post('/user/login', loginUser);
+router.get('/user/profile', authMiddleware, getProfile);

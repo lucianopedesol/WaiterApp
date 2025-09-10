@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
-import logo from '../../assets/images/logo.svg';
-import { Container, Content, StyledButton } from './styles';
+import { Container, Content, StyledButton, LogoffButton } from './styles';
+import { useAuth } from "../../contexts/authContext";
 
 const RightIcon = ({ className }: { className?: string }) => (
   <svg
@@ -21,6 +21,8 @@ const RightIcon = ({ className }: { className?: string }) => (
 
 export function Header() {
   const navigate = useNavigate();
+  const { authState, logout } = useAuth();
+  const { user } = authState;
 
   return (
     <Container>
@@ -28,12 +30,17 @@ export function Header() {
         <div className="details">
           <h1>Pedidos</h1>
           <h2>Acompanhe o pedido dos clientes</h2>
-
+          <LogoffButton onClick={logout}>
+            Sair
+          </LogoffButton>
         </div>
         {/* <img src={logo} alt="Waiter App logo"/> */}
-        <StyledButton onClick={() => navigate('/dashboard')}>
-          Relatório <RightIcon />
-        </StyledButton>
+
+        {user?.profile === 'ADMIN' && (
+          <StyledButton onClick={() => navigate('/dashboard')}>
+            Relatório <RightIcon />
+          </StyledButton>
+        )}
       </Content>
     </Container>
   );

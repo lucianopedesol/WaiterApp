@@ -1,4 +1,4 @@
-import {model, Schema} from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 export const Product = model('Product', new Schema({
   name: {
@@ -16,6 +16,11 @@ export const Product = model('Product', new Schema({
   price: {
     type: Number,
     required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    default: 0
   },
   ingredients: {
     type: [{

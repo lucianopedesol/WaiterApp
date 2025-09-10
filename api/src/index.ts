@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import cors from 'cors';
 import express from 'express';
 import {router} from './routes';
 import 'express-async-errors';
@@ -25,6 +26,7 @@ async function start() {
         .setHeader('access-control-max-age', 20);
       next();
     });
+    app.use(cors());
     app.use(express.json());
     app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
     app.use(router);
