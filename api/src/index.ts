@@ -7,6 +7,8 @@ import path from 'node:path';
 import http from 'node:http';
 import {Server} from 'socket.io';
 
+const MONGO_URI = process.env.MONGO_URI as string;
+
 const app = express();
 const server = http.createServer(app);
 export const io = new Server(server);
@@ -14,7 +16,7 @@ export const io = new Server(server);
 async function start() {
   try {
     mongoose.set('strictQuery', true);
-    await mongoose.connect('mongodb://localhost:27017');
+    await mongoose.connect(MONGO_URI);
 
     app.use((req, res, next) => {
       res.setHeader('access-control-allow-origin', '*')

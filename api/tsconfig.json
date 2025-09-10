@@ -15,5 +15,5 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,                           /* Skip type checking all .d.ts files. */
-  }
+  },
 }

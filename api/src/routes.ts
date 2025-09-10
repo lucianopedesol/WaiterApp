@@ -10,6 +10,8 @@ import {listOrdersByDateController, listOrdersController} from './app/controller
 import {createOrdersController} from './app/controllers/orders/createOrdersController';
 import {changeOrderStatusController} from './app/controllers/orders/changeOrderStatusController';
 import {cancelOrdersController} from './app/controllers/orders/cancelOrdersController';
+import { getProfile, loginUser, registerUser } from './app/controllers/auth/auth';
+import { authMiddleware } from './app/middlewares/auth.middleware';
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -44,3 +46,8 @@ router.get('/orders/report', listOrdersByDateController);
 router.post('/orders', createOrdersController);
 router.patch('/orders/:orderId', changeOrderStatusController);
 router.delete('/orders/:orderId', cancelOrdersController);
+
+// Rotas de usuário
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/profile', authMiddleware, getProfile);
