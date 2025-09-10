@@ -88,7 +88,7 @@ const ImagePreview = styled.img`
 
 const StyledButton = styled.button`
   padding: 8px 16px;
-  background-color: #007bff;
+  background-color: #4F46E5;
   color: white;
   border: none;
   border-radius: 8px;
@@ -97,7 +97,7 @@ const StyledButton = styled.button`
   font-weight: 600;
   transition: background-color 0.3s, transform 0.1s;
   &:hover {
-    background-color: #0056b3;
+    background-color: #4338CA;
   }
   &:active {
     transform: scale(0.99);
