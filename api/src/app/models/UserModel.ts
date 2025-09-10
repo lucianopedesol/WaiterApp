@@ -10,6 +10,7 @@ export interface IUserMethods {
 // Essa é a interface que você usará para os resultados das suas queries.
 export interface IUserDocument extends Document, IUserMethods {
   email: string;
+  profile: string;
   password?: string;
 }
 
@@ -24,6 +25,12 @@ const UserSchema: Schema<IUserDocument> = new Schema({
     unique: true,
     lowercase: true,
     trim: true,
+  },
+  profile: {
+    type: String,
+    required: true,
+    enum: ['ADMIN', 'SELLER', 'USER'],
+    default: 'USER',
   },
   password: {
     type: String,
