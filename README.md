@@ -1,3 +1,7 @@
+
+Implementar:
+https://www.youtube.com/watch?v=z4Vmpc1BOx0
+
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/76819323/211413172-165ebf01-1187-4c82-9bd4-25717afc1358.png' />
 </div>
@@ -26,22 +30,22 @@ O projeto possui uma aplicação mobile e web que se complementam, o app mobile 
 
 ## 🤔 Como usar?
 
-   
+
    1. Clone esse repositório:
    ```
    $ git clone https://github.com/lucianopedesol/WaiterApp.git
    ```
-   
+
    2. Entre no diretório:
    ```
    $ cd WaiterApp
    ```
-   
+
    3. Inicie a api (nessesario um banco mongo):
    ```
    $ cd api
    ```
-   
+
    - Instale as dependências:
    ```
    $ yarn install
@@ -50,39 +54,39 @@ O projeto possui uma aplicação mobile e web que se complementam, o app mobile 
    ```
    $ yarn dev
    ```
-   
+
    4. Inicie o frontend:
    ```
    $ cd frontend
    ```
-   
+
    - Instale as dependências:
    ```
    $ yarn install
    ```
-   
+
    - Inicie a aplicação em modo dev
    ```
    $ yarn dev
    ```
-   
+
    6. Inicie o app:
    ```
    $ cd app
    ```
-   
+
    - Instale as dependências:
    ```
    $ yarn install
    ```
-   
+
    - Inicie a aplicação mobile
    ```
    $ yarn start
    ```
 
 ## 🎥 Demo
- 
+
 https://user-images.githubusercontent.com/76819323/211413189-5f6d2b98-881a-4f03-af01-aaf3ef07e215.mp4
 
 ---
