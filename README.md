@@ -16,9 +16,9 @@ Waiter app é uma aplicação desenvolvida para ajudar no fluxo de pedidos de um
 
 O projeto possui uma aplicação mobile e web que se complementam, o app mobile serve como menu para que os garçons possam criar pedidos dos clientes com na mesa que eles ocupam. A versão web é um dashboard todo que mostra o estado do pedido, para controle da cozinha. E a api serve como o centralizador de tudo, permitindo com que os dados sejam enviados de uma ponta a outra automaticamente.
 
-- [Api](https://github.com/VictorKayk/WaiterApp/tree/main/api)
-- [Frontend](https://github.com/VictorKayk/WaiterApp/tree/main/frontend)
-- [Mobile](https://github.com/VictorKayk/WaiterApp/tree/main/waiter-app)
+- [Api](https://github.com/lucianopedesol/WaiterApp/tree/main/api)
+- [Frontend](https://github.com/lucianopedesol/WaiterApp/tree/main/frontend)
+- [Mobile](https://github.com/lucianopedesol/WaiterApp/tree/main/waiter-app)
 
 <a href='https://www.figma.com/file/Ivct0qKlCFhWIIPrC5yHBF/WAITERAPP?node-id=216%3A1787&t=4ByEfZEfoA5QrxMn-0'>
   <img src='https://user-images.githubusercontent.com/76819323/211413174-84698301-e65d-4251-87e3-c018ba9f3326.png' />
@@ -29,7 +29,7 @@ O projeto possui uma aplicação mobile e web que se complementam, o app mobile 
    
    1. Clone esse repositório:
    ```
-   $ git clone https://github.com/VictorKayk/WaiterApp.git
+   $ git clone https://github.com/lucianopedesol/WaiterApp.git
    ```
    
    2. Entre no diretório:
