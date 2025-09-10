@@ -1,10 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { api } from '../../utils/api';
+import FileInput from '../common/FileInput';
 
 // --- TIPOS GLOBAIS (TYPESCRIPT) --- //
+interface Ingredient {
+  name: string;
+  icon: string;
+}
+
 interface Category {
   _id?: string;
+  icon: string;
   name: string;
 }
 
@@ -12,7 +19,7 @@ interface Product {
   _id?: string;
   name: string;
   description: string;
-  ingredients: { name: string; icon: string }[];
+  ingredients: Ingredient[];
   quantity: number;
   category: string;
 }
@@ -99,9 +106,9 @@ const NavButton = styled.button<{ $active?: boolean }>`
 
   &:hover {
     background-color: ${({ $active }) =>
-      $active ? theme.colors.primaryHover : theme.colors.background};
+    $active ? theme.colors.primaryHover : theme.colors.background};
     color: ${({ $active }) =>
-      $active ? theme.colors.surface : theme.colors.textPrimary};
+    $active ? theme.colors.surface : theme.colors.textPrimary};
   }
 `;
 
@@ -205,7 +212,7 @@ const ModalContent = styled.div`
   padding: 2rem;
   border-radius: ${theme.borderRadius};
   width: 100%;
-  max-width: 500px;
+  max-width: 900px;
   box-shadow: ${theme.shadows.md};
 `;
 
@@ -284,6 +291,46 @@ const ModalFooter = styled.div`
   margin-top: 2rem;
 `;
 
+
+
+const IngredientList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid ${theme.colors.border};
+  border-radius: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: ${theme.colors.background};
+`;
+
+const IngredientItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: ${theme.colors.surface};
+  border-radius: 4px;
+  border: 1px solid ${theme.colors.border};
+  font-size: 0.9rem;
+`;
+
+const IngredientInputGroup = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+`;
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  width: 100%;
+`;
+
+
 // --- COMPONENTES FUNCIONAIS --- //
 
 // Modal para Formulários
@@ -298,7 +345,7 @@ const FormModal: React.FC<FormModalProps> = ({ title, children, onClose }) => (
     <ModalContent onClick={(e) => e.stopPropagation()}>
       <ModalHeader>
         <ModalTitle>{title}</ModalTitle>
-        <Button variant="secondary" onClick={onClose} style={{padding: '0.3rem'}}>✖</Button>
+        <Button variant="secondary" onClick={onClose} style={{ padding: '0.3rem' }}>✖</Button>
       </ModalHeader>
       {children}
     </ModalContent>
@@ -314,15 +361,27 @@ interface CategoryFormProps {
 
 const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel }) => {
   const [name, setName] = useState(category?.name || '');
+  const [icon, setIcon] = useState(category?.icon || '');
 
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     if (!name.trim()) return;
-    onSave({ ...category, name });
+    onSave({ ...category, name, icon });
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <FormGroup>
+        <Label htmlFor="category-icon">Ícone da Categoria</Label>
+        <Input
+          id="category-icon"
+          type="text"
+          value={icon}
+          onChange={(e) => setIcon(e.target.value)}
+          placeholder="Ex: Bebidas"
+          required
+        />
+      </FormGroup>
       <FormGroup>
         <Label htmlFor="category-name">Nome da Categoria</Label>
         <Input
@@ -344,67 +403,107 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel 
 
 // Formulário de Produto
 interface ProductFormProps {
-    product: Product | null;
-    categories: Category[];
-    onSave: (product: Product) => void;
-    onCancel: () => void;
+  product: Product | null;
+  categories: Category[];
+  onSave: (product: Product) => void;
+  onCancel: () => void;
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ product, categories, onSave, onCancel }) => {
-    const [formData, setFormData] = useState({
-        name: product?.name || '',
-        description: product?.description || '',
-        ingredients: product?.ingredients.map(ing => ing.name).join(', ') || [],
-        quantity: product?.quantity || 0,
-        category: product?.category || (categories.length > 0 ? categories[0]._id : '')
-    });
+  const [formData, setFormData] = useState({
+    name: product?.name || '',
+    description: product?.description || '',
+    ingredients: product?.ingredients || [],
+    quantity: product?.quantity || 0,
+    category: product?.category || (categories.length > 0 ? categories[0]._id : '')
+  });
 
-    const handleChange = (e: { target: { name: any; value: any; type: any; }; }) => {
-        const { name, value, type } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'number' ? parseInt(value, 10) : value,
-        }));
-    };
+  const [ingName, setIngName] = useState('');
+  const [ingIcon, setIngIcon] = useState('');
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-        if (!formData.name.trim() || !formData.category) return;
-        // TypeScript: category is string here due to the check above
-        onSave({ ...product, ...formData, category: formData.category as string });
-    };
+  const handleChange = (e: { target: { name: any; value: any; type: any; }; }) => {
+    const { name, value, type } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'number' ? parseInt(value, 10) : value,
+    }));
+  };
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <FormGroup>
-                <Label htmlFor="product-name">Nome do Produto</Label>
-                <Input id="product-name" name="name" type="text" value={formData.name} onChange={handleChange} required />
-            </FormGroup>
-             <FormGroup>
-                <Label htmlFor="product-category">Categoria</Label>
-                <Select id="product-category" name="category" value={formData.category} onChange={handleChange} required>
-                    <option value="" disabled>Selecione uma categoria</option>
-                    {categories.map(cat => <option key={cat._id} value={cat._id}>{cat.name}</option>)}
-                </Select>
-            </FormGroup>
-            <FormGroup>
-                <Label htmlFor="product-description">Descrição</Label>
-                <Textarea id="product-description" name="description" value={formData.description} onChange={handleChange} />
-            </FormGroup>
-            <FormGroup>
-                <Label htmlFor="product-ingredients">Ingredientes</Label>
-                <Textarea id="product-ingredients" name="ingredients" value={formData.ingredients} onChange={handleChange} />
-            </FormGroup>
-            <FormGroup>
-                <Label htmlFor="product-quantity">Quantidade em Estoque</Label>
-                <Input id="product-quantity" name="quantity" type="number" value={formData.quantity} onChange={handleChange} min="0" required />
-            </FormGroup>
-            <ModalFooter>
-                <Button type="button" variant="secondary" onClick={onCancel}>Cancelar</Button>
-                <Button type="submit">Salvar Produto</Button>
-            </ModalFooter>
-        </form>
-    );
+  const handleAddIngredient = () => {
+    if (!ingName.trim()) return;
+    setFormData(prev => ({
+      ...prev,
+      ingredients: [...prev.ingredients, { name: ingName, icon: ingIcon }]
+    }));
+    setIngName('');
+    setIngIcon('');
+  };
+
+  const handleRemoveIngredient = (indexToRemove: number) => {
+    setFormData(prev => ({
+      ...prev,
+      ingredients: prev.ingredients.filter((_, index) => index !== indexToRemove)
+    }));
+  };
+
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.category) return;
+    onSave({ ...product, ...formData, category: formData.category || '' });
+  };
+
+  return (
+    <FormContainer onSubmit={handleSubmit}>
+      <div>
+        <FormGroup>
+          <Label htmlFor="product-name">Nome do Produto</Label>
+          <Input id="product-name" name="name" type="text" value={formData.name} onChange={handleChange} required />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="product-category">Categoria</Label>
+          <Select id="product-category" name="category" value={formData.category} onChange={handleChange} required>
+            <option value="" disabled>Selecione uma categoria</option>
+            {categories.map(cat => <option key={cat._id} value={cat._id}>{cat.name}</option>)}
+          </Select>
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="product-description">Descrição</Label>
+          <Textarea id="product-description" name="description" value={formData.description} onChange={handleChange} />
+        </FormGroup>
+        <FormGroup>
+          <Label>Ingredientes</Label>
+          <IngredientList>
+            {formData.ingredients.length === 0 && <span style={{ color: theme.colors.textSecondary, fontSize: '0.9rem' }}>Nenhum ingrediente adicionado.</span>}
+            {formData.ingredients.map((ing, index) => (
+              <IngredientItem key={index}>
+                <span>{ing.icon} {ing.name}</span>
+                <Button type="button" variant="danger" onClick={() => handleRemoveIngredient(index)} style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}>Remover</Button>
+              </IngredientItem>
+            ))}
+          </IngredientList>
+          <IngredientInputGroup>
+            <Input type="text" placeholder="Nome do Ingrediente" value={ingName} onChange={(e) => setIngName(e.target.value)} style={{ flex: 2 }} />
+            <Input type="text" placeholder="Ícone" value={ingIcon} onChange={(e) => setIngIcon(e.target.value)} style={{ flex: 1 }} />
+            <Button type="button" onClick={handleAddIngredient}>Adicionar</Button>
+          </IngredientInputGroup>
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="product-quantity">Quantidade em Estoque</Label>
+          <Input id="product-quantity" name="quantity" type="number" value={formData.quantity} onChange={handleChange} min="0" required />
+        </FormGroup>
+
+        <ModalFooter>
+          <Button type="button" variant="secondary" onClick={onCancel}>Cancelar</Button>
+          <Button type="submit">Salvar Produto</Button>
+        </ModalFooter>
+      </div>
+      <div>
+        <FormGroup>
+          <FileInput />
+        </FormGroup>
+      </div>
+    </FormContainer>
+  );
 };
 
 
@@ -445,8 +544,8 @@ const Backoffice = () => {
 
   const handleDeleteCategory = (category: string) => {
     if (products.some(p => p.category === category)) {
-        alert('Não é possível deletar uma categoria que está sendo usada por um produto.');
-        return;
+      alert('Não é possível deletar uma categoria que está sendo usada por um produto.');
+      return;
     }
     setCategories(categories.filter(c => c._id !== category));
   };
@@ -458,31 +557,31 @@ const Backoffice = () => {
 
   // --- Funções CRUD para Produtos --- //
   const handleSaveProduct = (productToSave: Omit<Product, 'id'> & { id?: string }) => {
-      if (productToSave._id) {
-          // Editar
-          setProducts(products.map(p => p._id === productToSave._id ? { ...p, ...productToSave } as Product : p));
-      } else {
-          // Criar
-          const newProduct: Product = { ...productToSave, id: `prod-${Date.now()}` } as Product;
-          setProducts([...products, newProduct]);
-      }
-      setProductModalOpen(false);
+    if (productToSave._id) {
+      // Editar
+      setProducts(products.map(p => p._id === productToSave._id ? { ...p, ...productToSave } as Product : p));
+    } else {
+      // Criar
+      const newProduct: Product = { ...productToSave, id: `prod-${Date.now()}` } as Product;
+      setProducts([...products, newProduct]);
+    }
+    setProductModalOpen(false);
   };
 
   const handleDeleteProduct = (productId: string) => {
-      setProducts(products.filter(p => p._id !== productId));
+    setProducts(products.filter(p => p._id !== productId));
   };
 
   const openProductModal = (product: Product | null = null) => {
-      setEditingProduct(product);
-      setProductModalOpen(true);
+    setEditingProduct(product);
+    setProductModalOpen(true);
   };
 
   useEffect(() => {
     api.get('categories').then(({ data }) => setCategories(data));
-    api.get('products').then(({ data }) =>{
+    api.get('products').then(({ data }) => {
       console.log(data);
-       setProducts(data)
+      setProducts(data)
     });
   }, []);
 
@@ -544,9 +643,10 @@ const Backoffice = () => {
                 + Adicionar Categoria
               </Button>
             </CardHeader>
-             <Table>
+            <Table>
               <thead>
                 <tr>
+                  <Th>Ícone</Th>
                   <Th>Nome</Th>
                   <Th>Ações</Th>
                 </tr>
@@ -554,6 +654,7 @@ const Backoffice = () => {
               <tbody>
                 {categories.map((cat) => (
                   <tr key={cat._id}>
+                    <Td>{cat.icon}</Td>
                     <Td>{cat.name}</Td>
                     <Td>
                       <ActionsContainer>
