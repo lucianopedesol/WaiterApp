@@ -1,16 +1,16 @@
-import {Header} from './components/Header';
-import {Orders} from './components/Orders';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {Main} from './components/Main';
+import {Dashboard} from './components/Dashboard';
+
 function App() {
-
   return (
-    <>
-      <Header/>
-      <Orders />
-      <ToastContainer position='bottom-center' />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
   );
 }
 

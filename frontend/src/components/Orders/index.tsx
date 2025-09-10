@@ -69,7 +69,7 @@ export function Orders() {
         onOrderStatusChange={handleOrderStatusChange}
       />
       <OrdersBoard
-        icon="✅"
+        icon="👍"
         title="Pronto!"
         orders={done}
         nextStatus='DELIVERED'

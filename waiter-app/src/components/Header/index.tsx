@@ -1,6 +1,7 @@
 import {Container, OrderHeader, Table} from './styles';
 import {Text} from '../Text';
 import {TouchableOpacity, View} from 'react-native';
+import { useState } from 'react';
 
 interface HeaderProps {
   selectedTable: string;
@@ -8,6 +9,7 @@ interface HeaderProps {
 }
 
 export function Header({ selectedTable, onCancelOrder }: HeaderProps) {
+  const [isRequested, setIsRequested] = useState(false);
   return (
     <Container>
       {!selectedTable && (
@@ -24,9 +26,22 @@ export function Header({ selectedTable, onCancelOrder }: HeaderProps) {
         <View>
           <OrderHeader>
             <Text size={24} weight="600">Pedido</Text>
-            <TouchableOpacity onPress={() => onCancelOrder()}>
-              <Text size={14} weight="600" color='#D73035'>Cancelar pedido</Text>
-            </TouchableOpacity>
+            {isRequested ? (
+              <>
+                <Text size={14} weight="600" color='#D73035'>Deseja cancelar o pedido?</Text>
+                <TouchableOpacity onPress={() => onCancelOrder()}>
+                  <Text size={14} weight="600" color='#D73035'>Sim</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setIsRequested(false)}>
+                  <Text size={14} weight="600" color='#D73035'>Não</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+
+              <TouchableOpacity onPress={() => setIsRequested(true)}>
+                <Text size={14} weight="600" color='#D73035'>Cancelar pedido</Text>
+              </TouchableOpacity>
+            )}
           </OrderHeader>
           <Table>
             <Text>Mesa {selectedTable}</Text>

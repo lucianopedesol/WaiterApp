@@ -32,3 +32,20 @@ export const Content = styled.div`
     }
   }
 `;
+
+// Componente estilizado para o botão para centralizar o CSS em um só lugar
+export const StyledButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  border-radius: 9999px;
+  color: #FFF;
+  &:hover {
+    background-color: rgba(209, 213, 219, 0.5);
+  }
+`;

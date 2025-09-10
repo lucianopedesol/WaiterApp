@@ -41,15 +41,14 @@ export function OrdersBoard({ icon, title, orders, nextStatus, onCancelOrder, on
     toast.success(message);
   }
 
-  async function handleOrderStatusChange() {
-    if (!nextStatus) return;
+  async function handleOrderStatusChange(status = nextStatus) {
+    if (!status) return;
     setIsLoading(true);
 
     await api.patch(`orders/${selectedOrder?._id}`, {
-      status: nextStatus
+      status
     });
-    console.log(selectedOrder, nextStatus);
-    onOrderStatusChange(selectedOrder!._id, nextStatus);
+    onOrderStatusChange(selectedOrder!._id, status);
     setIsLoading(false);
     setIsModalVisible(false);
     toast.success(`O pedido da mesa ${selectedOrder?.table} teve o status alterado!`);
@@ -63,7 +62,7 @@ export function OrdersBoard({ icon, title, orders, nextStatus, onCancelOrder, on
         onClose={() => handleCloseModal()}
         onCancelOrder={handleCancelOrder}
         isLoading={isLoading}
-        onOrderStatusChange={handleOrderStatusChange}
+        onOrderStatusChange={(status) => handleOrderStatusChange(status)}
       />
 
       <header>

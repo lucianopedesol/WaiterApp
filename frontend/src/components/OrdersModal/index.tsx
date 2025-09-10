@@ -1,17 +1,20 @@
-import {Actions, ModalBody, OrderDetails, Overlay} from './styles';
+import { Actions, ModalBody, OrderDetails, Overlay } from './styles';
 import close from '../../assets/images/close-icon.svg';
-import {Order} from '../../Types/Order';
-import {formatCurrency} from '../../utils/formatCurrency';
-import {useEffect} from 'react';
+import { Order } from '../../Types/Order';
+import { formatCurrency } from '../../utils/formatCurrency';
+import { useEffect } from 'react';
+
+const PRODUCTION_STEPS = ['WAITING', 'IN_PRODUCTION'];
+
 interface OrdersModalProps {
   visible: boolean;
   order: Order | null;
   isLoading: boolean;
   onClose(): void;
   onCancelOrder(): void;
-  onOrderStatusChange(): void;
+  onOrderStatusChange(status?: Order['status']): void;
 }
-export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,  onOrderStatusChange }: OrdersModalProps) {
+export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder, onOrderStatusChange }: OrdersModalProps) {
   if (!visible || !order) return null;
 
   const total = order.products.reduce((prev, current) => {
@@ -36,7 +39,7 @@ export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,
         <header>
           <strong>Mesa {order.table}</strong>
           <button type="button" onClick={() => onClose()}>
-            <img src={close} alt="close icon"/>
+            <img src={close} alt="close icon" />
           </button>
         </header>
 
@@ -54,6 +57,7 @@ export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,
               {order.status === 'DONE' && 'Pronto!'}
             </strong>
           </div>
+
         </div>
 
         <OrderDetails>
@@ -63,7 +67,7 @@ export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,
             {order.products.map(({ _id, product, quantity }) => (
               <div className="item" key={_id}>
                 <img
-                  src={`http://192.168.0.16:5000/uploads/${product.imagePath}`}
+                  src={`http://192.168.0.73:5000/uploads/${product.imagePath}`}
                   alt={product.name}
                   width="58"
                   height="28.51"
@@ -87,7 +91,7 @@ export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,
 
         <Actions>
           {order.status !== 'DELIVERED' && (
-            <button type="button" className="primary" disabled={isLoading} onClick={onOrderStatusChange}>
+            <button type="button" className="primary" disabled={isLoading} onClick={() => onOrderStatusChange()}>
               <span>
                 {order.status === 'WAITING' && '👩‍🍳'}
                 {order.status === 'IN_PRODUCTION' && '☑️'}
@@ -104,6 +108,13 @@ export function OrdersModal({ visible, order, isLoading, onClose, onCancelOrder,
           <button type="button" className="secondary" onClick={onCancelOrder} disabled={isLoading}>
             {order.status !== 'DELIVERED' ? 'Cancelar pedido' : 'Deletar pedido'}
           </button>
+          {
+            PRODUCTION_STEPS.includes(order.status) && (
+              <button type="button" className="secondary" onClick={() => onOrderStatusChange('DELIVERED')} disabled={isLoading}>
+                Finalizar
+              </button>
+            )
+          }
         </Actions>
       </ModalBody>
     </Overlay>
