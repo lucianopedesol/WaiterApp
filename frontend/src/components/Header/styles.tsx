@@ -44,12 +44,50 @@ export const StyledButton = styled.button`
   justify-content: center;
   transition: background-color 0.2s;
   border-radius: 9999px;
-  color: #FFF;
+  color: #000;
   &:hover {
     background-color: rgba(209, 213, 219, 0.5);
   }
 `;
 
+export const NavMenu = styled.button`
+
+`;
+export const Nav = styled.nav`
+  position: relative;
+`;
+
+export const NavDetails = styled.details`
+  position: relative;
+`;
+
+export const NavSummary = styled.summary`
+  cursor: pointer;
+  font-weight: 500;
+  padding: 8px 0;
+  list-style: none;
+  color: #FFF;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+`;
+
+export const NavDropdown = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  min-width: 160px;
+`;
 export const LogoffButton = styled.button`
   background: transparent;
   border: none;

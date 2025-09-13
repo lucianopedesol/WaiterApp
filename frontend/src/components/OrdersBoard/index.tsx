@@ -2,7 +2,7 @@ import {Board, OrdersContainer} from './styles';
 import {Order} from '../../Types/Order';
 import {useState} from 'react';
 import {OrdersModal} from '../OrdersModal';
-import {api} from '../../utils/api';
+import {api} from '../../server/api';
 import {toast} from 'react-toastify';
 
 interface OrdersBoardProps {

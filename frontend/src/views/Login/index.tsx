@@ -4,7 +4,8 @@
  */
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/authContext';
-import {api} from '../../utils/api';
+import {api} from '../../server/api';
+import { AxiosError } from 'axios';
 
 interface AuthResponse {
   token: string;
@@ -26,7 +27,9 @@ const LoginPage: React.FC = () => {
       const token = response.data.token;
       login(token);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ocorreu um erro.');
+      const errorMessage =
+        ((err as AxiosError<{ error?: string }>).response?.data?.error) || 'Ocorreu um erro.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

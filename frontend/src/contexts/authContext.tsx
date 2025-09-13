@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('@MarcasSession:authToken');
     if (token) {
       const user = decodeJwtToken(token);
       if (user) {
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           user,
         });
       } else {
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('@MarcasSession:authToken');
         setAuthState({ ...authState, loading: false });
       }
     } else {
@@ -82,7 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = (token: string) => {
-    localStorage.setItem('authToken', token);
+    localStorage.setItem('@MarcasSession:authToken', token);
     const user = decodeJwtToken(token);
     if (user) {
       setAuthState({
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('@MarcasSession:authToken');
     setAuthState({
       isAuthenticated: false,
       token: null,

@@ -8,5 +8,10 @@ export const Category = model('Category', new Schema({
   icon: {
     type: String,
     required: true,
-  }
+  },
+  active: {
+    type: Boolean,
+    required: true,
+    default: true
+  },
 }));

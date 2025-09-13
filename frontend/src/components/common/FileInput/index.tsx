@@ -112,7 +112,7 @@ const Container = styled.div`
   padding: 2rem;
 `;
 
-export default function FileInput() {
+export default function FileInput({image, onChange}: {image?: string | File | null, onChange: (image: File | null) => void}) {
   const [formData, setFormData] = useState<FormData>({
     imageFile: null,
     imagePreviewUrl: null,
@@ -120,6 +120,7 @@ export default function FileInput() {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    onChange(file || null);
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -139,19 +140,11 @@ export default function FileInput() {
     }
   };
 
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      name: e.target.value,
-    }));
-  };
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Dados do formulário:', formData);
     // Substituindo o alert por uma mensagem no console
     console.log('Dados enviados! Verifique o console para os detalhes.');
-
     // Você enviaria 'formData.imageFile' para o backend aqui.
     // Exemplo de como usar FormData para envio:
     // const form = new FormData();
@@ -175,15 +168,16 @@ export default function FileInput() {
               style={{ display: 'none' }}
               id="image-upload"
             />
-            {formData.imagePreviewUrl ? (
-              <ImagePreview src={formData.imagePreviewUrl} alt="Prévia da imagem selecionada" />
+
+            {(formData.imagePreviewUrl || image) ? (
+              <ImagePreview src={formData.imagePreviewUrl ? formData.imagePreviewUrl : `http://192.168.0.20:5000/uploads/${image}`} alt="Prévia da imagem selecionada" />
             ) : (
               <ImagePlaceholder>
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
                   <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
                   <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2ZM1.5 4a.5.5 0 0 1 .5-.5h12a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5V4Z"/>
                   <path d="M4 6.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-6Z"/>
-                  <path d="M4 6.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-6Z" fill-rule="evenodd"/>
+                  <path d="M4 6.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-6Z" fillRule="evenodd"/>
                 </svg>
                 <p>Selecionar uma imagem</p>
               </ImagePlaceholder>

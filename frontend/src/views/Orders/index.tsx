@@ -1,8 +1,8 @@
 import {Container} from './styles';
-import {OrdersBoard} from '../OrdersBoard';
+import {OrdersBoard} from '../../components/OrdersBoard';
 import {Order} from '../../Types/Order';
 import {useEffect, useState} from 'react';
-import {api} from '../../utils/api';
+import {api} from '../../server/api';
 import socket, { io } from 'socket.io-client';
 
 export function Orders() {

@@ -1,16 +1,17 @@
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
-import {Header} from '../Header';
+import {Header} from '../../components/Header';
 import {Orders} from '../Orders';
 
-export function Main() {
+const Main = () => {
   return (
     <>
       <Header/>
       <Orders />
-      <ToastContainer position='bottom-center' />
+      <ToastContainer position='top-right' />
     </>
   );
 }
 
+export default Main;

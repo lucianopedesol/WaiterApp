@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router";
 
 import {
@@ -9,7 +9,9 @@ import {
   StyledButton,
   FilterSection,
   InputGroup,
+  InputGroupContent,
   DateInput,
+  DateTimeInput,
   SummaryGrid,
   SummaryCard,
   IconWrapper,
@@ -24,34 +26,18 @@ import {
   EmptyState,
   CardContent,
 } from './styles';
-import { api } from '../../utils/api';
+import { api } from '../../server/api';
 
-// --- Interfaces TypeScript ---
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  category: string;
-}
-
-interface OrderProduct {
-  product: Product;
-  quantity: number;
-  _id: string;
-}
-
-interface Order {
-  _id: string;
-  table: string;
-  status: string;
-  products: OrderProduct[];
-  createdAt: string;
-}
-
-interface CategorySummary {
-  categoryName: string;
+interface ProductSummary {
+  productName: string;
   totalValue: number;
   totalQuantity: number;
+}
+
+interface ProcessedDataResult {
+  grandTotalValue: number;
+  grandTotalQuantity: number;
+  products: ProductSummary[];
 }
 
 // --- Ícones (Componentes Funcionais Simples) ---
@@ -86,25 +72,40 @@ const BackIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const categoryMap: { [key: string]: string } = {
-  "68b220e6d1793b4b912cde20": "Bebidas",
-  "68b220fbd1793b4b912cde23": "Pizzas",
-};
-
-
 // --- Componente Principal ---
-export function Dashboard() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+const Dashboard = () => {
+  const [data, setData] = useState<ProcessedDataResult>({
+    grandTotalValue: 0,
+    grandTotalQuantity: 0,
+    products: [],
+  });
+  // inicie as datas e horas com o valor do dia de hoje na hora zero e o end date com o valor do dia de hoje na hora 23:59
+  const [startDate, setStartDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [startTime, setStartTime] = useState<string>('00:00');
+  const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [endTime, setEndTime] = useState<string>('23:59');
   let navigate = useNavigate();
 
-
+  // Buscar relatório do backend
   useEffect(() => {
-    api.get('orders').then(({ data }) => setOrders((data as Order[]) || []));
-  }, []);
+    const fetchReport = async () => {
+      try {
+        const params: any = {};
+        if (startDate) params.startDate = startDate;
+        if (startTime) params.startTime = startTime;
+        if (endDate) params.endDate = endDate;
+        if (endTime) params.endTime = endTime;
 
-  // Função para formatar moeda
+        const { data } = await api.get<ProcessedDataResult>('orders/report', { params });
+        setData(data);
+      } catch (error) {
+        console.error("Erro ao buscar relatório:", error);
+      }
+    };
+
+    fetchReport();
+  }, [startDate, startTime, endDate, endTime]);
+
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -112,53 +113,12 @@ export function Dashboard() {
     }).format(value);
   };
 
-  const processedData = useMemo(() => {
-    const filteredOrders = orders.filter(order => {
-      const orderDate = new Date(order.createdAt);
-      if (startDate) {
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-        if (orderDate < start) return false;
-      }
-      if (endDate) {
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-        if (orderDate > end) return false;
-      }
-      return true;
-    });
-
-    const categorySummary: { [key: string]: CategorySummary } = {};
-    let grandTotalValue = 0;
-    let grandTotalQuantity = 0;
-
-    filteredOrders.forEach(order => {
-      order.products.forEach(({ product, quantity }) => {
-        const { category: categoryId, price } = product;
-        const value = price * quantity;
-
-        grandTotalValue += value;
-        grandTotalQuantity += quantity;
-
-        if (!categorySummary[categoryId]) {
-          categorySummary[categoryId] = {
-            categoryName: categoryMap[categoryId] || 'Desconhecida',
-            totalValue: 0,
-            totalQuantity: 0,
-          };
-        }
-
-        categorySummary[categoryId].totalValue += value;
-        categorySummary[categoryId].totalQuantity += quantity;
-      });
-    });
-
-    return {
-      grandTotalValue,
-      grandTotalQuantity,
-      categories: Object.values(categorySummary).sort((a, b) => b.totalValue - a.totalValue),
-    };
-  }, [orders, startDate, endDate]);
+  const handleClearFilters = () => {
+    setStartDate('');
+    setStartTime('');
+    setEndDate('');
+    setEndTime('');
+  }
 
   return (
     <>
@@ -172,29 +132,44 @@ export function Dashboard() {
           </HeaderContainer>
           <HeaderSubtitle>Análise de pedidos por categoria.</HeaderSubtitle>
         </Header>
-
         <FilterSection>
-          <h2 style={{ fontWeight: 600, marginRight: '1rem' }}>Filtrar por data</h2>
+          {/* <h2 style={{ fontWeight: 600, marginRight: '1rem' }}>Filtros</h2> */}
           <InputGroup>
-            <label htmlFor="start-date">Data de Início</label>
-            <DateInput
-              id="start-date"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
+            <label htmlFor="start-date">Início</label>
+            <InputGroupContent>
+              <DateInput
+                id="start-date"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+              <DateTimeInput
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
+            </InputGroupContent>
           </InputGroup>
           <InputGroup>
-            <label htmlFor="end-date">Data de Fim</label>
-            <DateInput
-              id="end-date"
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
+            <label htmlFor="end-date">Fim</label>
+            <InputGroupContent>
+              <DateInput
+                id="end-date"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+              <DateTimeInput
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+            </InputGroupContent>
           </InputGroup>
+          <StyledButton onClick={handleClearFilters}>
+              Limpar
+          </StyledButton>
         </FilterSection>
-
         <SummaryGrid>
           <SummaryCard>
             <IconWrapper variant="green">
@@ -202,7 +177,7 @@ export function Dashboard() {
             </IconWrapper>
             <CardContent>
               <p>Faturamento Total</p>
-              <p>{formatCurrency(processedData.grandTotalValue)}</p>
+              <p>{formatCurrency(data.grandTotalValue)}</p>
             </CardContent>
           </SummaryCard>
           <SummaryCard>
@@ -211,32 +186,31 @@ export function Dashboard() {
             </IconWrapper>
             <CardContent>
               <p>Total de Itens Vendidos</p>
-              <p>{processedData.grandTotalQuantity}</p>
+              <p>{data.grandTotalQuantity}</p>
             </CardContent>
           </SummaryCard>
         </SummaryGrid>
-
         <TableContainer>
           <TableHeader>
-            <h2>Vendas por Categoria</h2>
+            <h2>Vendas por Produto</h2>
             <p>Detalhes dos valores e quantidades vendidas.</p>
           </TableHeader>
           <TableWrapper>
             <StyledTable>
               <THead>
                 <tr>
-                  <TH>Categoria</TH>
+                  <TH>Produto</TH>
                   <TH>Itens Vendidos</TH>
                   <TH>Valor Total</TH>
                 </tr>
               </THead>
               <TBody>
-                {processedData.categories.length > 0 ? (
-                  processedData.categories.map((cat) => (
-                    <tr key={cat.categoryName}>
-                      <TD className="font-medium">{cat.categoryName}</TD>
-                      <TD>{cat.totalQuantity}</TD>
-                      <TD className="font-medium">{formatCurrency(cat.totalValue)}</TD>
+                {data.products.length > 0 ? (
+                  data.products.map((prod) => (
+                    <tr key={prod.productName}>
+                      <TD className="font-medium">{prod.productName}</TD>
+                      <TD>{prod.totalQuantity}</TD>
+                      <TD className="font-medium">{formatCurrency(prod.totalValue)}</TD>
                     </tr>
                   ))
                 ) : (
@@ -253,9 +227,9 @@ export function Dashboard() {
             </StyledTable>
           </TableWrapper>
         </TableContainer>
-
       </DashboardContainer>
     </>
   );
 }
 
+export default Dashboard;

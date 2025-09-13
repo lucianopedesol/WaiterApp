@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
 import { useAuth } from '../../../contexts/authContext';
-import LoginPage from '../../Login';
+import LoginPage from '../../../views/Login';
 import Spinner from '../Spinner';
 
 interface ProtectedRouteProps {

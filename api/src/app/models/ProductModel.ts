@@ -17,10 +17,10 @@ export const Product = model('Product', new Schema({
     type: Number,
     required: true,
   },
-  quantity: {
-    type: Number,
+  active: {
+    type: Boolean,
     required: true,
-    default: 0
+    default: true
   },
   ingredients: {
     type: [{
